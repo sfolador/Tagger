@@ -7,7 +7,7 @@ Description: This plugin allows admins to tag images. Each tag can be related to
 Credits: this plugin uses jquery & fancybox
 */
 
-require_once 'classes/WPTagCollectiong.php';
+require_once 'classes/WPTagCollection.php';
 
 global $post;
 

@@ -3,7 +3,7 @@
 /**
  * This is the page that the admin sees. It's retrieved in an IFRAME element and shouldn't be reached by the user (front-end)
  */
-require_once WP_PLUGIN_DIR . '/' . 'tagger/Tagger.php';
+require_once WP_PLUGIN_DIR . '/' . 'tagger/tagger.php';
 
 ?>
 <!DOCTYPE html>
@@ -153,6 +153,8 @@ if ($_GET['post']) {
     $tags = new WPTagCollection($post = get_post($_GET['post']));
 
     $tags->load();
+    
+   
 
     if (isset($_POST['action']) && $_POST['action'] == 'reset') {
         $tags->removeAll();

@@ -19,10 +19,16 @@ class WPTagCollection extends TagsCollection {
 	 */
 	private $relatedPostsIds;
 	
+	/**
+	 * @var ArrayableCollection
+	 */
+	private $postsForAdmin;
+	
 	function __construct( $post, $loadAll = false ) {
 		parent::__construct( $post );
 		$this->relatedposts    = new ArrayableCollection();
 		$this->relatedPostsIds = new ArrayableCollection();
+		$this->postsForAdmin = new ArrayableCollection();
 	}
 	
 	
@@ -150,6 +156,32 @@ class WPTagCollection extends TagsCollection {
 	}
 	
 	/**
+	 * gets all the posts of a given post type.
+	 */
+	private function getAllRelatedPostsForAdmin( ) {
+		
+		$post_type = get_option( 'tagger_tag_related' );
+		if ( empty( $post_type ) ) {
+			$post_type = 'post';
+		}
+		
+		$args = array(
+			'numberposts' => - 1,
+			'post_type'   => $post_type,
+			'post_status' => 'publish'
+		);
+		
+		
+		$ps = get_posts( $args );
+		
+		foreach ( $ps as $p ) {
+			$this->postsForAdmin->add( $p ); //array('id' => $p->ID, 'title' => $p->post_title)
+			
+		}
+		unset( $ps );
+	}
+	
+	/**
 	 * @param $data the post ID
 	 *
 	 * @return string the post data required
@@ -170,7 +202,11 @@ class WPTagCollection extends TagsCollection {
 		
 	}
 	
-	
+	/**
+	 * @param bool $single
+	 *
+	 * @return string
+	 */
 	function generateOptions( $single = false ) {
 		if ( $single ) {
 			return $this->generateOptionsForATag( null, true );
@@ -203,7 +239,8 @@ class WPTagCollection extends TagsCollection {
 		}
 		$str       .= '<select name="related[]">';
 		$highlight = "";
-		foreach ( $this->relatedposts->publicArray as $post ) {
+		$this->getAllRelatedPostsForAdmin();
+		foreach ( $this->postsForAdmin->publicArray as $post ) {
 			if ( ! is_null( $point ) ) {
 				if ( ( $post->ID == $point->data ) && ( ! $empty ) ) {
 					$highlight = 'selected = "selected"';
