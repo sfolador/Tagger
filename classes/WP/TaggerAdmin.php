@@ -55,7 +55,7 @@ class TaggerAdmin {
 		}
 		
 		if ( ( isset( $_GET['page'] ) ) && ( $_GET['page'] == $redirect ) ) {
-			include( 'admin-page-tagger.php' );
+			include( PLUGINDIR . '/tagger/admin-page-tagger.php' );
 			exit();
 		}
 	}
@@ -107,6 +107,7 @@ class TaggerAdmin {
                     jQuery(".fan").fancybox({
                         'width': '85%',
                         'height': '85%',
+                        'z-index' : 10000,
                         'autoScale': true,
                         'transitionIn': 'none',
                         'transitionOut': 'none',
