@@ -21,7 +21,7 @@ class WPTagCollection extends TagsCollection {
 	
 	function __construct( $post, $loadAll = false ) {
 		parent::__construct( $post );
-		$this->relatedposts = new ArrayableCollection();
+		$this->relatedposts    = new ArrayableCollection();
 		$this->relatedPostsIds = new ArrayableCollection();
 	}
 	
@@ -30,55 +30,59 @@ class WPTagCollection extends TagsCollection {
 		return $this->savePointsToDB();
 	}
 	
-	function savePointsToDB() {
+	private function savePointsToDB() {
 		return update_post_meta( $this->post->ID, constant( 'TAGGER_METAFIELDNAME' ), $this->__toString() );
 	}
 	
-	function deleteAllPointsInDB() {
+	private function deleteAllPointsInDB() {
 		return delete_post_meta( $this->post->ID, constant( 'TAGGER_METAFIELDNAME' ) );
+	}
+	
+	function removeAll() {
+		parent::removeAll();
+		$this->deleteAllPointsInDB();
 	}
 	
 	function load() {
 		return $this->getPointsFromDB();
 	}
 	
-	function getPointsFromDB() {
+	private function getPointsFromDB() {
 		$points = get_post_meta( $this->post->ID, constant( 'TAGGER_METAFIELDNAME' ), true );
 		
 		return $this->parsePoints( $points );
 	}
 	
-	function parsePoints( $points ) {
+	private function parsePoints( $points ) {
 		
 		if ( empty( $points ) ) {
 			return false;
 		}
 		$pointsArray = json_decode( $points );
-		$ids =[];
+		$ids         = [];
 		foreach ( $pointsArray as $pointElement ) {
 			if ( ! empty( $pointElement ) ) {
-				$tp =  TaggerPoint::pointFromJson( $pointElement );
-				$this->addPoint( $tp);
+				$tp = TaggerPoint::pointFromJson( $pointElement );
+				$this->addPoint( $tp );
 				
-				$ids[$tp->data] = 1;
-				
+				$ids[ $tp->data ] = 1;
 				
 			}
 		}
-		$ids = array_keys($ids);
-		if (count( $ids)){
+		$ids = array_keys( $ids );
+		if ( count( $ids ) ) {
 			foreach ( $ids as $id ) {
-				$this->relatedPostsIds->add( $id);
+				$this->relatedPostsIds->add( $id );
 			}
 			
 			$this->populatedRelated();
 		}
+		
 		return true;
 	}
 	
-	function populatedRelated()
-	{
-		$this->getAllThePosts($this->relatedPostsIds->publicArray);
+	private function populatedRelated() {
+		$this->getAllThePosts( $this->relatedPostsIds->publicArray );
 	}
 	
 	
@@ -96,7 +100,7 @@ class WPTagCollection extends TagsCollection {
 		$str  = "";
 		$iter = 0;
 		if ( $this->points->hasElements() ) {
-		write_log( $this->points->publicArray );
+			write_log( $this->points->publicArray );
 			foreach ( $this->points->publicArray as $point ) {
 				$data = $this->getPointExtendedData( $point->data );
 				$str  .= '<div class="element ' . $iter . '" style="left: ' . $point->coord['x'] . 'px;top: ' . $point->coord['y'] . 'px">
@@ -119,7 +123,7 @@ class WPTagCollection extends TagsCollection {
 	/**
 	 * gets all the posts of a given post type.
 	 */
-	function getAllThePosts($ids = []) {
+	private function getAllThePosts( $ids = [] ) {
 		
 		$post_type = get_option( 'tagger_tag_related' );
 		if ( empty( $post_type ) ) {
@@ -132,11 +136,11 @@ class WPTagCollection extends TagsCollection {
 			'post_status' => 'publish'
 		);
 		
-		if (count( $ids) >0){
-			$args['include'] = implode( ",", $ids);
+		if ( count( $ids ) > 0 ) {
+			$args['include'] = implode( ",", $ids );
 		}
 		
-		$ps   = get_posts( $args );
+		$ps = get_posts( $args );
 		
 		foreach ( $ps as $p ) {
 			$this->relatedposts->add( $p ); //array('id' => $p->ID, 'title' => $p->post_title)
@@ -152,14 +156,14 @@ class WPTagCollection extends TagsCollection {
 	 * returns the post data.
 	 */
 	function getPointExtendedData( $data ) {
-	
-		write_log( $this->relatedposts);
+		
+		write_log( $this->relatedposts );
 		$v = $this->relatedposts->searchByValue( $data, "ID" );
 		
 		if ( $v !== false ) {
 			return $v;
-		}else{
-			error_log( "$data not found");
+		} else {
+			error_log( "$data not found" );
 		}
 		
 		return "";

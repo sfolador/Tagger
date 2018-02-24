@@ -440,8 +440,8 @@ function tagger_removed_thumbnail( $id, $postId, $metaName ) {
 		$p = get_post( $postId );
 		if ( $p->post_type == get_option( 'tagger_post_type' ) ) {
 			$wtColl = new WPTagCollection( $p );
-			$a      = $wtColl->deleteAllPointsInDB();
-			error_log( $a );
+			$wtColl->removeAll();
+			
 		}
 	}
 	
