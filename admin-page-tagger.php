@@ -3,7 +3,7 @@
 /**
  * This is the page that the admin sees. It's retrieved in an IFRAME element and shouldn't be reached by the user (front-end)
  */
-require_once WP_PLUGIN_DIR . '/' . 'tagger/tagger.php';
+require_once WP_PLUGIN_DIR . '/' . 'tagger/Tagger.php';
 
 ?>
 <!DOCTYPE html>
@@ -150,7 +150,7 @@ require_once WP_PLUGIN_DIR . '/' . 'tagger/tagger.php';
 $message = "";
 
 if ($_GET['post']) {
-    $tags = new tagsPlugin($post = get_post($_GET['post']));
+    $tags = new WPTagCollection($post = get_post($_GET['post']));
 
     $tags->load();
 
@@ -169,7 +169,7 @@ if ($_GET['post']) {
 
         for ($i = 0; $i < count($elements); $i++) {
             $tArray = explode(",", $elements[$i]);
-            $tags->addPoint(new pointPlugin(array('x' => $tArray[0], 'y' => $tArray[1]), $related[$i]));
+            $tags->addPoint(new TaggerPoint(array('x' => $tArray[0], 'y' => $tArray[1]), $related[$i]));
         }
 
         $tags->save();

@@ -7,11 +7,9 @@ Description: This plugin allows admins to tag images. Each tag can be related to
 Credits: this plugin uses jquery fancybox
 */
 
-require_once 'classes/tagsPlugin.php';
+require_once 'classes/WPTagCollectiong.php';
 
 global $post;
-
-
 
 if ( ! $post ) {
 	$post = new stdClass();
@@ -27,21 +25,15 @@ if ( empty( $post_type ) ) {
 	$post_type = 'page';
 }
 
+add_action( 'wp_enqueue_scripts', 'tagger_register_scripts' );
+add_action( 'init', 'redirectOnTagger' ); //redirects requests of the "rs" page to page-tagger.php
+add_action( 'add_meta_boxes', 'tagger_meta_box' ); //creates custom fields box
+add_action( 'admin_menu', 'tagger_admin_menu' ); //creates admin menu
+add_shortcode( 'Tagger', 'printTags' );
+add_action( 'after_setup_theme', 'setupTagger' );
+add_action( 'admin_notices', 'custom_error_notice' ); //display warning if user didn't upload the featured image
 
-
-//if ( ( $post->post_type = $post_type ) ) {
-//	wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
-//	wp_enqueue_script( 'jqueryN' );
-//	wp_register_script( 'taggerJS', '/' . PLUGINDIR . '/tagger/js/tagger.js' );
-//	wp_enqueue_script( 'taggerJS' );
-//	wp_register_style( 'taggerStyle', '/' . PLUGINDIR . '/tagger/css/style.css' );
-//	wp_enqueue_style( 'taggerStyle' );
-//}
-
-add_action( 'wp_enqueue_scripts', 'tagger_register_scripts');
-
-function tagger_register_scripts()
-{
+function tagger_register_scripts() {
 	wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
 	wp_enqueue_script( 'jqueryN' );
 	wp_register_script( 'taggerJS', '/' . PLUGINDIR . '/tagger/js/tagger.js' );
@@ -50,36 +42,29 @@ function tagger_register_scripts()
 	wp_enqueue_style( 'taggerStyle' );
 }
 
-add_action( 'init', 'redirectOnTagger' ); //redirects requests of the "rs" page to page-tagger.php
-
 function redirectOnTagger() {
 	
 	wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
 	wp_enqueue_script( 'jqueryN' );
-//wp_register_style('fancyCss', home_url() . '/sys/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.css');
 	wp_register_style( 'fancyCss', site_url() . '/' . PLUGINDIR . '/tagger/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.css' );
 	wp_enqueue_style( 'fancyCss' );
-//wp_register_script('fancybox', home_url() . '/sys/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.js');
 	wp_register_script( 'fancybox', site_url() . '/' . PLUGINDIR . '/tagger/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.js' );
 	wp_enqueue_script( 'fancybox' );
- 
- 
+	
 	$redirect = get_option( 'tagger_redirect_page' );
 	if ( empty( $redirect ) ) {
 		$redirect = 'rs';
 	}
 	
-	if ( ! current_user_can( 'administrator' ) && isset($_GET['page']) &&( $_GET['page'] == $redirect ) ) { //if the user is not an admin, he can't access the page (page-tagger.php)
+	if ( ! current_user_can( 'administrator' ) && isset( $_GET['page'] ) && ( $_GET['page'] == $redirect ) ) { //if the user is not an admin, he can't access the page (page-tagger.php)
 		wp_redirect( '404' ); //TODO change this!
 	}
 	
-	if ( (isset($_GET['page'])) && ($_GET['page'] == $redirect) ) {
-		include( 'page-tagger.php' );
+	if ( ( isset( $_GET['page'] ) ) && ( $_GET['page'] == $redirect ) ) {
+		include( 'admin-page-tagger.php' );
 		exit();
 	}
 }
-
-add_action( 'add_meta_boxes', 'tagger_meta_box' ); //creates custom fields box
 
 function tagger_meta_box() {
 	if ( function_exists( 'add_meta_box' ) ) {
@@ -118,7 +103,7 @@ function customfield_box() {
 		echo 'jQuery(".fan").fancybox({';
 		echo "'width'				: '85%',
 		'height'			: '85%',
-        'autoScale'     	: false,
+        'autoScale'     	: true,
         'transitionIn'		: 'none',
 		'transitionOut'		: 'none',
 		'type'				: 'iframe'
@@ -131,32 +116,30 @@ function customfield_box() {
 	
 }
 
-add_action( 'admin_menu', 'my_plugin_menu' ); //creates admin menu
-
-function my_plugin_menu() {
-	add_options_page( 'Tagger Options', 'Tagger Settings', 'manage_options', 'tagger-options', 'my_plugin_options' );
+function tagger_admin_menu() {
+	add_options_page( 'Tagger Options', 'Tagger Settings', 'manage_options', 'tagger-options', 'tagger_plugin_options' );
 }
 
-function my_plugin_options() {
+function tagger_plugin_options() {
 	if ( ! current_user_can( 'manage_options' ) ) {
 		wp_die( __( 'You do not have sufficient permissions to access this page.' ) );
 	}
 	
-	if ( $_POST['redirect-page'] ) {
+	if ( isset( $_POST['redirect-page'] ) ) {
 		update_option( 'tagger_redirect_page', $_POST['redirect-page'] );
 	}
-	if ( $_POST['post-type'] ) {
+	if ( isset( $_POST['post-type'] ) ) {
 		update_option( 'tagger_post_type', $_POST['post-type'] );
 	}
-	if ( $_POST['tag-related'] ) {
+	if ( isset( $_POST['tag-related'] ) ) {
 		update_option( 'tagger_tag_related', $_POST['tag-related'] );
 	}
-	if ( $_POST['customfield-title'] ) {
+	if ( isset( $_POST['customfield-title'] ) ) {
 		
 		update_option( 'tagger_customfield_title', $_POST['customfield-title'] );
 	}
 	
-	if ( $_POST['use-shortcode'] ) {
+	if ( isset( $_POST['use-shortcode'] ) ) {
 		
 		update_option( 'tagger_use_shortcode', $_POST['use-shortcode'] );
 	}
@@ -318,18 +301,14 @@ function print_tagger_img( $post = null ) {
 	
 	$id = @intval( $post );
 	
-	if ( ! ( is_object( $post)  ) ) {
+	if ( ! ( is_object( $post ) ) ) {
 		$post     = new stdClass();
 		$post->ID = $id;
 	}
 	
 	$img     = get_the_post_thumbnail( $post->ID, 'large', array( 'class' => 'item-clip', 'title' => "" ) );
-	$tags    = new tagsPlugin( $post );
+	$tags    = new WPTagCollection( $post );
 	$content = "";
-	
-	
-	
-	
 	
 	if ( $tags->load() ) {
 		
@@ -349,12 +328,9 @@ function print_tagger_img( $post = null ) {
 	} elseif ( $img ) {
 		$content .= $img;
 	}
-
 	
 	return $content;
 }
-
-add_shortcode( 'Tagger', 'printTags' );
 
 function printTags( $attr ) {
 	
@@ -366,8 +342,6 @@ function printTags( $attr ) {
 	
 	return "";
 }
-
-add_action( 'after_setup_theme', 'setupTagger' );
 
 function setupTagger() {
 	$labels = array(
@@ -403,19 +377,16 @@ function setupTagger() {
 	
 	register_post_type( 'room_setting', $args );
 	
-	
 }
-
-add_action( 'admin_notices', 'custom_error_notice' ); //display warning if user didn't upload the featured image
 
 function custom_error_notice() {
 	global $current_screen;
 	global $post_ID;
 	
-	if ( $current_screen->id == 'room_setting' ) {
+	if ( $current_screen->id == get_option('tagger_post_type') ) {
 		$img = get_the_post_thumbnail( $post_ID );
 		if ( ! $img ) {
-			$attention = " <p> <b> Please remember to add a Featured image in order to use Room Setting features</b><br/>
+			$attention = " <p> <b> Please remember to add a Featured image in order to use Tagger features</b><br/>
                    </p> ";
 			echo '<div class="error">' . $attention . '</div>';
 		}
@@ -424,14 +395,14 @@ function custom_error_notice() {
 }
 
 function printProducts( $post ) {
-	$tags    = new tagsPlugin( $post );
+	$tags    = new WPTagCollection( $post );
 	$results = array();
-	write_log( "print products");
+	write_log( "print products" );
 	if ( $tags->load() ) {
 		$points = $tags->getPoints();
 		if ( $points->hasElements() ) {
 			for ( $i = 0; $i < $points->counter; $i ++ ) {
-				if ( ( get_class( $points->publicArray[ $i ] ) == 'pointPlugin' ) && ( $points->publicArray[ $i ]->data ) ) {
+				if ( ( get_class( $points->publicArray[ $i ] ) == 'TaggerPoint' ) && ( $points->publicArray[ $i ]->data ) ) {
 					$tempPost = get_post( $points->publicArray[ $i ]->data );
 					
 					$thumb = get_the_post_thumbnail( $tempPost->ID, 'product-thumb' );
