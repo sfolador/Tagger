@@ -4,7 +4,7 @@ Plugin Name: Tagger
 Author: Simone Folador
 License: GPLv2 or later
 Description: This plugin allows admins to tag images. Each tag can be related to a post/page etc..
-Credits: this plugin uses jquery fancybox
+Credits: this plugin uses jquery & fancybox
 */
 
 require_once 'classes/WPTagCollectiong.php';
@@ -32,6 +32,7 @@ add_action( 'admin_menu', 'tagger_admin_menu' ); //creates admin menu
 add_shortcode( 'Tagger', 'printTags' );
 add_action( 'after_setup_theme', 'setupTagger' );
 add_action( 'admin_notices', 'custom_error_notice' ); //display warning if user didn't upload the featured image
+add_filter( 'delete_post_metadata', 'tagger_removed_thumbnail', 10, 3 );
 
 function tagger_register_scripts() {
 	wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
@@ -311,14 +312,8 @@ function print_tagger_img( $post = null ) {
 	$content = "";
 	
 	if ( $tags->load() ) {
-		
-		
+	 
 		$content .= '<div id="image-container" class="main-image">';
-
-//        $content .= '<span class="showroom-grid-item-top"></span> ';
-//        $content .= '<span class="showroom-grid-item-btm"></span> ';
-
-//    $img = "<div class='item-clip'>$img</div> ";
 		
 		$content .= $img;
 		$content .= $tags->printInPage();
@@ -383,7 +378,7 @@ function custom_error_notice() {
 	global $current_screen;
 	global $post_ID;
 	
-	if ( $current_screen->id == get_option('tagger_post_type') ) {
+	if ( $current_screen->id == get_option( 'tagger_post_type' ) ) {
 		$img = get_the_post_thumbnail( $post_ID );
 		if ( ! $img ) {
 			$attention = " <p> <b> Please remember to add a Featured image in order to use Tagger features</b><br/>
@@ -439,4 +434,15 @@ function printArrayOfRelatedTags( $arr ) {
 	echo '</div>';
 }
 
-//TODO add function that removes tags if the featured image is removed
+function tagger_removed_thumbnail( $id, $postId, $metaName ) {
+	
+	if ( $metaName == '_thumbnail_id' ) {
+		$p = get_post( $postId );
+		if ( $p->post_type == get_option( 'tagger_post_type' ) ) {
+			$wtColl = new WPTagCollection( $p );
+			$a      = $wtColl->deleteAllPointsInDB();
+			error_log( $a );
+		}
+	}
+	
+}

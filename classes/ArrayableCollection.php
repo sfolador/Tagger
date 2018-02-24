@@ -182,20 +182,39 @@ class ArrayableCollection {
 	 * @return bool|mixed if found returns the element, if not, returns false
 	 */
 	public function searchBy( $element, $compare = array( 'ID', 'ID' ) ) {
-		$c    = 0;
-		$flag = false;
+		
 		list( $firstField, $secondField ) = $compare;
 		for ( $i = 0; $i < $this->counter; $i ++ ) {
 			if ( $this->array[ $i ]->$firstField == $element->$secondField ) {
-				$c    = $i;
-				$flag = true;
+				return $this->array[ $i ];
 			}
 		}
-		if ( ! $flag ) {
-			return false;
+		
+		return false;
+		
+	}
+	
+	/**
+	 * @param $value
+	 * @param string $compare the field we want to compare
+	 *
+	 * @return bool|mixed if found returns the element, if not, returns false
+	 */
+	public function searchByValue( $value, $fieldName ) {
+		
+		//var_dump( $this->array);exit;
+	
+		for ( $i = 0; $i < $this->counter; $i ++ ) {
+			if ( $this->array[ $i ]->$fieldName == $value ) {
+				return $this->array[ $i ];
+			}else{
+				write_log( "error reading $i - $fieldName");
+				write_log( $this->array[$i]);
+			}
 		}
 		
-		return $this->array[ $c ];
+		return false;
+		
 	}
 	
 }

@@ -13,7 +13,6 @@ class Point {
 	 */
 	public $data;
 	
-	
 	/**
 	 * @param $coord array (i.e.: array('x' => 0, 'y'=> 0))
 	 * @param $data  string
