@@ -111,7 +111,7 @@ $selection = $tags->generateOptions(true);
 
             Y = Y - 20;
             X = X - 20;
-
+ 
             $(newElement).addClass('element').addClass("" + elementCounter + "").css(
                 {
                     'top': Y,

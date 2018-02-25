@@ -3,7 +3,7 @@
 Plugin Name: Tagger
 Author: Simone Folador
 License: GPLv2 or later
-Description: This plugin allows admins to tag images. Each tag can be related to a post/page etc..
+Description: This plugin allows admins to tag images. Each tag can be related to a post/page
 Credits: this plugin uses jquery & fancybox
 */
 
