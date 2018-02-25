@@ -37,9 +37,9 @@ class Tagger {
 		
 		wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
 		wp_enqueue_script( 'jqueryN' );
-		wp_register_script( 'taggerJS', '/' . PLUGINDIR . '/tagger/js/tagger.js' );
+		wp_register_script( 'taggerJS', '/' . PLUGINDIR . '/tagger/assets/dist/js/tagger.js' );
 		wp_enqueue_script( 'taggerJS' );
-		wp_register_style( 'taggerStyle', '/' . PLUGINDIR . '/tagger/css/style.css' );
+		wp_register_style( 'taggerStyle', '/' . PLUGINDIR . '/tagger/assets/dist/css/app.css' );
 		wp_enqueue_style( 'taggerStyle' );
 	}
 	

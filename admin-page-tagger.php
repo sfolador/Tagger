@@ -13,7 +13,7 @@ require_once WP_PLUGIN_DIR . '/' . 'tagger/tagger.php';
     <title></title>
     <script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js'></script>
     <style></style>
-    <link rel="stylesheet" href="<?php echo site_url() . '/' . PLUGINDIR . '/tagger/css/admin-style.css';?>">
+    <link rel="stylesheet" href="<?php echo site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/admin-style.css';?>">
     <?php
     wp_head();
     ?>
@@ -104,7 +104,7 @@ $selection = $tags->generateOptions(true);
             var newElement = document.createElement('div');
             var icon = document.createElement('img');
             //adding the + icon
-            $(icon).attr("src", '<?php echo site_url().'/'.PLUGINDIR.'/tagger/images/add-icon.png'; ?>');
+            $(icon).attr("src", '<?php echo site_url().'/'.PLUGINDIR.'/tagger/assets/dist/images/add-icon.png'; ?>');
             /**
              * @todo get the icon path using options instead of hardcoding it
              */

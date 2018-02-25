@@ -1,0 +1,38 @@
+{
+  "private": true,
+  "scripts": {
+    "prod": "gulp --production",
+    "dev": "gulp watch"
+  },
+  "devDependencies": {
+    "autoprefixer": "^7.1.6",
+    "browserify": "^15.2.0",
+    "caller-id": "^0.1.0",
+    "caniuse-lite": "^1.0.30000792",
+    "doiuse": "^4.0.0",
+    "fs": "^0.0.1-security",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-filter": "^5.0.1",
+    "gulp-flatten": "^0.3.1",
+    "gulp-image": "^4.1.0",
+    "gulp-less": "^3.3.2",
+    "gulp-postcss": "^7.0.0",
+    "gulp-sass": "^3.1.0",
+    "gulp-shell": "^0.6.3",
+    "gulp-sourcemaps": "^2.6.1",
+    "gulp-uglify": "^3.0.0",
+    "gulp-util": "^3.0.8",
+    "path": "^0.12.7",
+    "postcss-cssnext": "^3.0.2",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "fontawesome5-webfont": "^5.0.4",
+    "lodash": "^4.17.4",
+    "moment": "^2.20.1",
+    "popper.js": "^1.12.9",
+    "sweetalert2": "^7.8.2"
+  }
+}
