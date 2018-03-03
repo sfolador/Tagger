@@ -28,11 +28,23 @@ class TaggerAdmin {
 		] ); //redirects requests of the "rs" page to page-tagger.php
 		add_action( 'add_meta_boxes', [ $this, 'createTaggerMetaBox' ] ); //creates custom fields box
 		add_action( 'admin_menu', [ $this, 'createTaggerAdminMenu' ] ); //creates admin menu
+		add_action( 'admin_enqueue_scripts', [ $this, 'registerAdminScripts' ] );
+		
 		add_action( 'admin_notices', [
 			$this,
 			'createTaggerCustomErrorNotice'
 		] ); //display warning if user didn't upload the featured image
 	}
+	
+	public function registerAdminScripts()
+    {
+	    wp_register_style( 'fancyCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/jquery.fancybox-1.3.4.css' );
+	    wp_enqueue_style( 'fancyCss' );
+	    wp_register_style( 'taggerAdminCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/admin-style.css' );
+	    wp_enqueue_style( 'taggerAdminCss' );
+	    wp_register_script( 'fancybox', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/js/libs/libs.js' );
+	    wp_enqueue_script( 'fancybox' );
+    }
 	
 	/**
 	 * Redirects the user if the URL is admin page of Tagger (defaults to "rs").
@@ -40,12 +52,8 @@ class TaggerAdmin {
 	public function redirectOnTaggerPage() {
 //		wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
 //		wp_enqueue_script( 'jqueryN' );
-		wp_register_style( 'fancyCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/jquery.fancybox-1.3.4.css' );
-		wp_enqueue_style( 'fancyCss' );
-		wp_register_style( 'taggerAdminCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/admin-style.css' );
-		wp_enqueue_style( 'taggerAdminCss' );
-		wp_register_script( 'fancybox', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/js/libs/libs.js' );
-		wp_enqueue_script( 'fancybox' );
+        //admin_enqueue_script();
+		
 		
 		$redirect = get_option( 'tagger_redirect_page' );
 		if ( empty( $redirect ) ) {
