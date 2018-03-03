@@ -110,7 +110,7 @@ class WPTagCollection extends TagsCollection {
 			foreach ( $this->points->publicArray as $point ) {
 				$data = $this->getPointExtendedData( $point->data );
 				$str  .= '<div class="element ' . $iter . '" style="left: ' . $point->coord['x'] . 'px;top: ' . $point->coord['y'] . 'px">
-                      <a href="' . get_permalink( $data->ID ) . '"><img src="' . site_url() . '/' . PLUGINDIR . '/tagger/' . '/images/add-icon.png" />
+                      <a href="' . get_permalink( $data->ID ) . '"><img src="' . site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/images/add-icon.png" />
                              </a>
                     </div>';
 				

@@ -38,11 +38,13 @@ class TaggerAdmin {
 	 * Redirects the user if the URL is admin page of Tagger (defaults to "rs").
 	 */
 	public function redirectOnTaggerPage() {
-		wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
-		wp_enqueue_script( 'jqueryN' );
-		wp_register_style( 'fancyCss', site_url() . '/' . PLUGINDIR . '/tagger/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.css' );
+//		wp_register_script( 'jqueryN', 'http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js' );
+//		wp_enqueue_script( 'jqueryN' );
+		wp_register_style( 'fancyCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/jquery.fancybox-1.3.4.css' );
 		wp_enqueue_style( 'fancyCss' );
-		wp_register_script( 'fancybox', site_url() . '/' . PLUGINDIR . '/tagger/js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.js' );
+		wp_register_style( 'taggerAdminCss', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/css/admin/admin-style.css' );
+		wp_enqueue_style( 'taggerAdminCss' );
+		wp_register_script( 'fancybox', site_url() . '/' . PLUGINDIR . '/tagger/assets/dist/js/libs/libs.js' );
 		wp_enqueue_script( 'fancybox' );
 		
 		$redirect = get_option( 'tagger_redirect_page' );
@@ -107,7 +109,7 @@ class TaggerAdmin {
                     jQuery(".fan").fancybox({
                         'width': '85%',
                         'height': '85%',
-                        'z-index' : 10000,
+                        'z-index' : 161000,
                         'autoScale': true,
                         'transitionIn': 'none',
                         'transitionOut': 'none',

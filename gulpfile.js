@@ -83,7 +83,7 @@ var mainNpmFiles = module.exports = function (options) {
 var config = {
     PATH_SRC              : 'assets/src/',
     PATH_BUILD            : 'assets/dist/',
-    production            : true
+    production            : false
 };
 
 var sass_opts = {
@@ -145,15 +145,15 @@ gulp.task('js', function () {
         .pipe(config.production ? uglify() : util.noop())
         .pipe(gulp.dest(config.PATH_BUILD + 'js'));
 
-    gulp.src([config.PATH_SRC + 'js/models/**/*.js', config.PATH_SRC + 'js/tagger.js'])
+    gulp.src([config.PATH_SRC + 'js/tagger.js'])
         .pipe(config.production ? uglify({mangle: false}) : util.noop())
         .pipe(concat('application.js'))
         .pipe(gulp.dest(config.PATH_BUILD + 'js'));
 
-    gulp.src([config.PATH_SRC + 'js/widgets/*.js'])
+    gulp.src([config.PATH_SRC + 'js/jquery.fancybox-1.3.4/fancybox/jquery.fancybox-1.3.4.js'])
         .pipe(config.production ? uglify({mangle: false}) : util.noop())
-        // .pipe(concat('components.js'))
-        .pipe(gulp.dest(config.PATH_BUILD + 'js/widgets'));
+         .pipe(concat('libs.js'))
+        .pipe(gulp.dest(config.PATH_BUILD + 'js/libs'));
 
 });
 
@@ -165,6 +165,33 @@ gulp.task('sass', function () {
       //  .pipe(browserSync.reload({stream: true}));
 
     gulp.src([config.PATH_SRC + 'sass/admin/*.scss'])
+        .pipe(config.production ? util.noop() : sourcemaps.init())
+        .pipe(sass(sass_opts).on('error', sass.logError))
+        .pipe(
+            postcss(
+                [
+                    cssnext(),
+                    // autoprefixer(),
+                    doiuse({
+                        browsers   : [
+                            'ie >= 10'
+                        ],
+                        ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
+                        // array of features to
+                        // ignore
+                        ignoreFiles: ['**/normalize.css'], // an optional array of file globs to match against original source file path, to ignore
+                        // onFeatureUsage: function (usageInfo) {
+                        //   console.log(usageInfo.message)
+                        // }
+                    })
+                ]
+            )
+        )
+        .pipe(config.production ? util.noop() : sourcemaps.write())
+        .pipe(gulp.dest(config.PATH_BUILD + 'css/admin'))
+        .pipe(filter('scss**/*.css'));
+
+    gulp.src([config.PATH_SRC + 'js/jquery.fancybox-1.3.4/fancybox/*.css'])
         .pipe(config.production ? util.noop() : sourcemaps.init())
         .pipe(sass(sass_opts).on('error', sass.logError))
         .pipe(
@@ -236,6 +263,21 @@ gulp.task('copy', function () {
 // scss
 gulp.task('images', function () {
 
+    gulp.src(config.PATH_SRC + 'js/jquery.fancybox-1.3.4/fancybox/**/*.{jpg,png,gif,svg}')
+        // .pipe(image(
+        //     {
+        //         pngquant      : true,
+        //         optipng       : false,
+        //         zopflipng     : true,
+        //         jpegRecompress: false,
+        //         mozjpeg       : true,
+        //         guetzli       : false,
+        //         gifsicle      : true,
+        //         svgo          : true,
+        //         concurrent    : 10
+        //     }
+        // ))
+        .pipe(gulp.dest(config.PATH_BUILD + 'css/admin'));
 
     return gulp.src(config.PATH_SRC + 'images/**/*.{jpg,png,gif,svg}')
         .pipe(image(
