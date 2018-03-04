@@ -83,7 +83,7 @@ var mainNpmFiles = module.exports = function (options) {
 var config = {
     PATH_SRC              : 'assets/src/',
     PATH_BUILD            : 'assets/dist/',
-    production            : false
+    production            : true
 };
 
 var sass_opts = {
@@ -134,16 +134,16 @@ gulp.task('copy', function () {
 gulp.task('js', function () {
 
 
-    var b = browserify({
-        //entries: config.PATH_SRC + 'js/require.js',
-        debug: true
-    });
+    // var b = browserify({
+    //     //entries: config.PATH_SRC + 'js/require.js',
+    //     debug: true
+    // });
 
-    b.bundle()
-        .pipe(source('bundle.min.js'))
-        .pipe(buffer())
-        .pipe(config.production ? uglify() : util.noop())
-        .pipe(gulp.dest(config.PATH_BUILD + 'js'));
+    // b.bundle()
+    //     .pipe(source('bundle.min.js'))
+    //     .pipe(buffer())
+    //     .pipe(config.production ? uglify() : util.noop())
+    //     .pipe(gulp.dest(config.PATH_BUILD + 'js'));
 
     gulp.src([config.PATH_SRC + 'js/tagger.js'])
         .pipe(config.production ? uglify({mangle: false}) : util.noop())

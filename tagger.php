@@ -1,10 +1,10 @@
 <?php
 /*
-Plugin Name: Tagger
-Author: Simone Folador
-License: GPLv2 or later
-Description: This plugin allows admins to tag images. Each tag can be related to a post/page
-Credits: this plugin uses jquery & fancybox
+ Plugin Name: Tagger
+ Author: Simone Folador
+ License: GPLv2 or later
+ Description: This plugin allows admins to tag images. Each tag can be related to a post or page
+ Credits: this plugin uses jQuery & Fancybox
 */
 
 require_once 'classes/WPTagCollection.php';
