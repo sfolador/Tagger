@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+    
     $('#image-container').on({
         'mouseenter':function () {
             $(this).children('.element').fadeTo('slow', 0.4);
