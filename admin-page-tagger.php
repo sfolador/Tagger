@@ -20,7 +20,7 @@ require_once WP_PLUGIN_DIR . '/' . 'tagger/tagger.php';
 
 
 </head>
-<body>
+<body class="fancy-tagger">
 <h3>Please insert/modify:</h3>
 <?php
 $message = "";
@@ -58,18 +58,19 @@ if ($_GET['post']) {
     } // if post
 
     ?>
+
     <div id="image-container">
-        <div class='thumb'><?php echo get_the_post_thumbnail($post->ID, 'large'); ?> </div>
-        <?php
-        echo $tags->printInPage();
-        ?>
+        <div class='thumb'>
+            <img src="<?php echo get_the_post_thumbnail_url($post->ID); ?>" alt="" />
+        </div>
+        <?php echo $tags->printInPage(); ?>
     </div>
 
     <div id="elements">
         <form method="post" id="elements-form" action='<?php echo $_SERVER['REQUEST_URI']; ?>'>
-            <?php
-            echo $tags->generateOptions();
-            ?>
+            <div class="slider-related-products">
+                <?php echo $tags->generateOptions(); ?>
+            </div>
             <button class="red-button dont-show" name="submit">SAVE</button>
             <div class="clear"></div>
         </form>
@@ -96,35 +97,21 @@ $selection = $tags->generateOptions(true);
             var X = event.pageX - left;
             var Y = event.pageY - right;
 
-            console.log("X: " + X + " Y: " + Y);
+            $('body.fancy-tagger').addClass('show-list');
 
             /**
              * creating and adding a new element
              */
-            var newElement = document.createElement('div');
-            var icon = document.createElement('img');
-            //adding the + icon
-            $(icon).attr("src", '<?php echo site_url().'/'.PLUGINDIR.'/tagger/assets/dist/images/add-icon.png'; ?>');
-            /**
-             * @todo get the icon path using options instead of hardcoding it
-             */
-
-            Y = Y - 20;
-            X = X - 20;
+            var newElement = $('<div><div class="cnt"></div></div>');
  
-            $(newElement).addClass('element').addClass("" + elementCounter + "").css(
-                {
-                    'top': Y,
-                    'left': X,
-                    'display': 'block'
-                }
-            ).prepend($(icon));
+            $(newElement).addClass('element ' + elementCounter).attr('count', elementCounter).css({ 'top': Y, 'left': X, 'display': 'block'});
 
-            var newElementBox = document.createElement('div');
+            var image = $('#image-container .thumb img');
+            var perc_x = (100 * X) / image.width();
+            var perc_y = (100 * Y) / image.height();
 
             //adding the select box
-            //$('#elements-form').append(createElementBox(""+elementCounter+"", X + ", " + Y ));
-            $(createElementBox("" + elementCounter + "", X + ", " + Y)).insertBefore(".red-button");
+            $(".slider-related-products").append(createElementBox(elementCounter, perc_x + ", " + perc_y));
 
             //show the submit button
             $('#elements-form input[type=submit]').show();
@@ -132,57 +119,60 @@ $selection = $tags->generateOptions(true);
             //adding the element over the image
             $('#image-container').append($(newElement)); //shows the red square
 
-            //$('#elements').prepend($(newElementBox)); //
-
             elementCounter++;
         }); //thumb click
 
+        // elementi in immagine
         $('.element').live('mouseover', function () {
-
-            var cl = $(this).clone().removeClass('element').attr("class");
+            var cl = $(this).attr('count');
             $(this).addClass("element-hover");
-            $('#' + cl).addClass('highlight');
+            var box = $('#' + cl);
+            box.addClass('highlight');
+            $('.slider-related-products').animate({
+                scrollLeft: box.position().left
+            }, 220);
         }).live('mouseout', function () {
             $(this).removeClass("element-hover");
-            var cl = $(this).clone().removeClass('element').attr("class");
+            var cl = $(this).attr('count');
             $('#' + cl).removeClass('highlight');
         });
 
         /**
          * remove an element
          */
-        $('.remove').live('click',
-            function (e) {
-                e.preventDefault();
-                var cl = $(this).parent().attr("id");
-                $('#image-container').children().each(function (index, element) {
-                    if ($(element).hasClass(cl)) {
-                        $(element).remove();
-                        return false;
-                    }
-                });
-
-                $(this).parent().remove();
-                if ($('#elements-form').find('.select-box').length == 0) {
-                    $('#elements-form').append(createInputHiddenReset());
+        $('.remove').live('click', function (e) {
+            e.preventDefault();
+            var cl = $(this).parent().attr("id");
+            $('#image-container').children().each(function (index, element) {
+                if ($(element).hasClass(cl)) {
+                    $(element).remove();
+                    return false;
                 }
             });
+
+            $(this).parent().remove();
+            if ($('#elements-form').find('.select-box').length == 0) {
+                $('#elements-form').append(createInputHiddenReset());
+            }
+        });
 
         $('#elements-form').on({
             'mouseenter': function () {
                 var cl = $(this).attr("id");
-                $('#image-container > .' + cl).css("background-color", "#ccc");
+                $('#image-container > .element.' + cl).addClass('highlight');
                 $(this).addClass('highlight');
 
             },
             'mouseleave': function () {
                 var cl = $(this).attr("id");
-                $('#image-container > .' + cl).css("background-color", "");
+                $('#image-container > .element.' + cl).removeClass('highlight');
                 $(this).removeClass('highlight');
             }
         }, '.select-box');
 
-        $(".message").fadeOut(2000);
+        setTimeout(function () {
+            $(".message").fadeOut(500);
+        }, 2000);
 
     });
 

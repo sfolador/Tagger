@@ -115,13 +115,35 @@ class TaggerAdmin {
             <script type="text/javascript">
                 jQuery(document).ready(function () {
                     jQuery(".fan").fancybox({
-                        'width': '85%',
+                        'width': '94%',
                         'height': '85%',
                         'z-index' : 161000,
                         'autoScale': true,
+//	                    centerOnScroll: true,
                         'transitionIn': 'none',
                         'transitionOut': 'none',
-                        'type': 'iframe'
+                        'type': 'iframe',
+	                    'onStart': function (evt) { jQuery('body').addClass('fancy-open'); },
+	                    'onClose': function (evt) { jQuery('body').removeClass('fancy-open'); },
+	                    'onComplete': function (evt) {
+		                    jQuery("#fancybox-close").on('click', function () {
+			                    jQuery('body').removeClass('fancy-open');
+		                    });
+		                    setTimeout(function () {
+			                    var img = jQuery('#fancybox-frame').contents().find('body img');
+			                    console.log(img);
+			                    img.one("load", function() {
+				                    console.log("image loaded!");
+				                    var iframe = jQuery('#fancybox-frame').contents().find('body');
+				                    jQuery('#fancybox-content').height(iframe.height());
+//				                    jQuery(".fan").resize();
+//				                    jQuery(".fan").fancybox.resize();
+			                    }).each(function() {
+				                    console.log(img);
+				                    if(this.complete) $(this).load();
+			                    });
+		                    }, 500);
+	                    }
                     });
                 });
 
@@ -187,8 +209,7 @@ class TaggerAdmin {
 			update_option( 'tagger_use_shortcode', $_POST['use-shortcode'] );
 		}
 		
-		echo '
-        <div class="wrap">';
+		echo '<div class="wrap">';
 		?>
         <h3>Tagger Settings</h3>
         <p>

@@ -1,122 +1,65 @@
+@import "../_variables.scss";
+
+@mixin close-icon {
+  position: relative; display: inline-block; font-size: .625em; width: 1em; height: 1em; overflow: hidden; background: $color-red-light;
+  &:hover { background: $color-red; }
+  &::before, &::after { content: ''; position: absolute; height: 2px; width: 1em; top: 50%; left: 21%; margin-top: -1px; background: $color-creme; }
+  &::before { transform: rotate(45deg); }
+  &::after { transform: rotate(-45deg); }
+  &.hairline {
+    &::before, &::after {
+      height: 1px;
+    }
+  }
+}
+
 body {
-    font-family : Helvetica, Arial;
-    font-size   : 12px;
-}
-#fancybox-wrap {z-index:16000 !important;}
-.thumb {
-    position : absolute;
-    width    : 584px;
-    height   : 513px;
+  font-family: Helvetica, Arial; font-size: 12px;
+  &.fancy-open { overflow: hidden; }
 }
 
-.element {
-    /*display: none;*/
-    position      : absolute;
-    z-index       : 10000;
-    /*border: 1px solid red;*/
-    /*width: 42px;*/
-    /*height:42px;*/
-    cursor        : pointer;
-    /*background-color: #fafafa;*/
-    /*background: url(images/add-icon.png);*/
-    border-radius : 5px;
+#fancybox-wrap {
+  z-index: 16000 !important; padding: 0; position: fixed !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%);
+  #fancybox-content { max-height: 90vh !important; overflow-x: hidden; overflow-y: auto; border: none; width: 100% !important; }
+  #fancybox-close { @include close-icon(); position: absolute; top: 0; right: 0; height: $fancy-height-header; width: $fancy-height-header; font-size: 26px; }
 }
 
-.element-data {
-    display          : none;
-    background-color : #fafafa;
-    color            : #000;
-    padding          : 10px;
-    width            : 120px;
-    position         : relative;
-    border-radius    : 5px;
-    border           : 1px solid #ccc;
-    box-shadow       : 3px 3px 3px #878787;
+.fancy-tagger {
+  h3 { display: block; line-height: $fancy-height-header; width: calc(100% - #{$fancy-height-header}); background: $color-white; color: $color-green; margin-bottom: 0; padding: 0 15px; }
 }
 
-#image-container {
-    /*border: 1px solid blue;*/
-    width    : 584px;
-    height   : 513px;
-    position : relative;
-    float    : left;
+//.element-data { display: none; background-color: #FAFAFA; color: #000; padding: 10px; width: 120px; position: relative; border-radius: 5px; border: 1px solid #CCC; box-shadow: 3px 3px 3px #878787; }
+
+.fancy-tagger {
+  #image-container {
+    width: 100%; min-height: 350px; position: relative;
+    // max-height: calc(100vh - #{$fancy-height-submit} - #{$fancy-height-header} - #{$fancy-height-related});
+    .thumb {
+      width: 100%; height: auto; position: relative;
+      img { display: block; }
+    }
+    .element {
+      .cnt {
+        &:before { content: '+'; display: inline-block; height: auto; width: auto; font-size: 40px; line-height: $element_h; text-align: center; background: none; margin: 0; }
+        &:after { content: ''; position: absolute; left: -4px; top: -4px; right: -4px; bottom: -4px; }
+      }
+    }
+  }
 }
 
-.dont-show {
-    /*display: none;*/
-}
 
-#elements {
-    float       : left;
-    margin-left : 10px;
-}
 
-.toolTip {
-    position : absolute;
-    z-index  : 10000;
-}
+#elements { width: 100%; }
 
-.highlight {
-    border           : 1px solid red;
-    background-color : #ffeb87;
-}
-
-.green-border {
-    border : 1px solid green;
-}
-
-.select-box {
-    padding       : 10px;
-    border-radius : 5px;
-    border        : 1px solid #ccc;
-    margin-bottom : 5px;
-}
-
-a.remove, a.remove:visited {
-    color : #000;
-}
-
-a.remove:hover {
-    color           : #fff;
-    text-decoration : underline;
-}
-
-a.remove {
-    padding-left : 10px;
-}
-
-.element-hover {
-    background-color : #ccc;
-}
 
 .red-button {
-    border-radius    : 5px;
-    text-shadow      : 1px 1px 1px #ccc;
-    color            : #fff;
-    padding          : 5px;
-    width            : 50px;
-    border           : none;
-    background-color : #ff4500;
-    float            : right;
-    cursor           : pointer;
+  border-radius: 0; color: $color-creme; padding: 5px; width: 50px; border: none; background-color: $color-green; width: $fancy-width-submit; cursor: pointer; padding: 0; display: block; line-height: $fancy-height-related; font-weight: normal; float: right;
+  &:hover { background: $color-green-dark; }
 }
 
-.clear {
-    clear : both;
-}
-
-.red-button:hover {
-    background-color : #2ea5ff;
-}
+.clear { clear: both; }
 
 .message {
-    padding          : 10px;
-    background-color : #00a800;
-    color            : #fff;
-    border-radius    : 5px;
-    margin           : 20px;
-}
-
-.warning {
-    background-color : #ff7b3d;
+  padding: 10px 30px; background-color: #58c52d; color: #FFF; border-radius: 0; position: absolute; top: $fancy-height-header; left: 0; z-index: 100001; width: 100%; text-align: center;
+  &.warning { background-color: #ff5a3d; }
 }

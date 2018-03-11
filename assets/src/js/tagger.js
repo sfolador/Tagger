@@ -1,66 +1,118 @@
 $(document).ready(function () {
 
-    
-    $('#image-container').on({
-        'mouseenter':function () {
-            $(this).children('.element').fadeTo('slow', 0.4);
-            //$(this).children('.element').children('.element-data').hide();
+	var get_related_from_count = function (el) {
+		var cl = el.attr('count');
+		return {
+			desktop: $('.showroom-related .related-product.' + cl),
+			mobile: $('#in-this-picture .related-product.' + cl)
+		};
+	};
 
-        },
-        'mouseleave':function (e, arg) {
-            if (arg == undefined) arg = 'slow';
-            $(this).children('.element').fadeTo(arg, 0.2).children('.element-data').hide();
+	$('.single-room_setting #image-container .element').on({
+		'mouseleave': function (evt) {
+			if($(evt.target).parents('.element').length < 0){
+				var rels = $('.showroom-related .related-product');
+				rels.removeClass('show');
+				rels.css({
+					left: 'auto',
+					top: 'auto'
+				});
+			}
+		}
+	});
+
+	$('#in-this-picture .related-product').on({
+		'mouseenter': function () {
+			var cl = $(this).attr("id");
+			$('#image-container > .element.' + cl).addClass('highlight');
+			$(this).addClass('highlight');
+
+		},
+		'mouseleave': function () {
+			var cl = $(this).attr("id");
+			$('#image-container > .element.' + cl).removeClass('highlight');
+			$(this).removeClass('highlight');
+		},
+		'click': function () {
+			var link = $(this).data("link");
+			window.location.href = link;
+		}
+	});
+
+	$('.single-room_setting #image-container .element').on({
+		'mouseenter': function (evt) {
+			var _this = $(this);
+			var rel = get_related_from_count(_this).desktop;
+			var rel_mobile = get_related_from_count(_this).mobile;
+
+			// desktop
+			if(!$('#in-this-picture').is(':visible')) {
+
+				var x = _this.position().left;
+				var y = _this.position().top;
+				var width_rel = rel.width();
+				var height_rel = rel.height();
+				var width_cnt = $('#image-container').width();
+				var height_cnt = $('#image-container').height();
+				var posX = x - width_rel/2;
+				var posY = y - height_rel/2;
 
 
-        }
-    }).on('click', '.element', function () {
-            //console.log('children: ' + $(this).find('a').length);
-            window.location.href = $(this).find('a').attr("href");
-        }
-    );
+				// posizionamento orizzontale
+				if(posX < 10){
+					posX = 10;
+				}
+				if(posX + width_rel > width_cnt) {
+					posX = width_cnt - 10 - width_rel;
+				}
 
-    $('.element').on({'mouseenter':function (e) {
-        e.stopPropagation();
+				// posizionamento verticale
+				if(posY < 10){
+					posY = 10;
+				}
+				else if(posY + height_rel > height_cnt) {
+					posY = height_cnt - 10 - height_rel;
+				}
 
+				// setta la posizione e la visibilità
+				rel.addClass('show');
+				rel.css({
+					left: posX,
+					top: posY
+				});
 
-        $(this).animate({opacity:1}, "fast");
+			}
+			// mobile
+			else {
 
+				rel_mobile.addClass('highlight');
+				var left = rel_mobile.position().left + $('#in-this-picture').scrollLeft();
+				$('#in-this-picture').animate({
+					scrollLeft: left
+				}, 220);
 
-        var cl = $(this).attr('class').split(" ");
-        // console.log(cl[1]);
+			}
 
+		},
+		'mouseleave': function () {
+			// mobile
+			if($('#in-this-picture').is(':visible')) {
+				$('#in-this-picture .related-product').removeClass('highlight');
+			}
+		}
+	});
 
-        $("#in-this-picture a." + cl[1]).css('color', 'red');
+	$('.showroom .showroom-related article').on({
+		'click': function (evt) {
+			window.location.href = $(this).data("link");
+		},
+		'mouseenter': function (evt) {
 
-        // $(this).children('.element-data').fadeIn();
-
-
-    }, 'mouseleave':function (e) {
-        e.stopPropagation();
-        $(this).fadeTo('slow', 0.4);
-        //$(this).children('.element-data').fadeOut();
-        var cl = $(this).attr('class').split(" ");
-
-//TODO change this
-        $("#in-this-picture a." + cl[1]).css('color', 'black');
-    }});
-
-    var el = null;
-    $("#in-this-picture a").on({
-        'mouseenter':function () {
-            el = $(this).attr("class");
-            var cross = $('.element.' + el);
-            //cross.fadeIn(false);
-            cross.trigger('mouseenter');
-
-        },
-        'mouseleave':function () {
-            el = $(this).attr("class");
-            var cross = $('.element.' + el);
-            $(this).css("color", "black");
-            $('#image-container').trigger('mouseleave', 'fast');
-            //  cross.children('.element-data').hide();
-        }
-    });
+		},
+		'mouseleave': function () {
+			var _this = $(this);
+			_this.removeClass('show');
+		}
+	});
 
 });

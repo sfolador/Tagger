@@ -17,8 +17,8 @@ var gulp         = require("gulp"),
     doiuse       = require('doiuse'),
     path         = require('path'),
     fs           = require('fs'),
-    callerId     = require('caller-id');
- //   browserSync  = require("browser-sync"),
+    callerId     = require('caller-id')
+   browserSync  = require("browser-sync");
    // reload       = browserSync.reload;
 
 var mainNpmFiles = module.exports = function (options) {
@@ -83,7 +83,8 @@ var mainNpmFiles = module.exports = function (options) {
 var config = {
     PATH_SRC              : 'assets/src/',
     PATH_BUILD            : 'assets/dist/',
-    production            : true
+    production            : true,
+   APP_URL : 'http://wordpress.simonefolador.local'
 };
 
 var sass_opts = {
@@ -124,10 +125,11 @@ gulp.task('npm', function () {
 // copia i file necessari
 gulp.task('copy', function () {
 
-    gulp.src(config.PATH_SRC + 'fonts/**/*.{otf,eot,svg,ttf,woff,woff2}')
-        .pipe(gulp.dest(config.PATH_BUILD + 'fonts'));
+      gulp.src(config.PATH_SRC + 'fonts/**/*.{otf,eot,svg,ttf,woff,woff2}')
+         .pipe(flatten({includeParents: 1}))
+         .pipe(gulp.dest(config.PATH_BUILD + 'fonts'));
 
-});
+   });
 
 
 // recupera, concatena e minimizza i files JS dell'applicativo
@@ -172,18 +174,13 @@ gulp.task('sass', function () {
                 [
                     cssnext(),
                     // autoprefixer(),
-                    doiuse({
-                        browsers   : [
-                            'ie >= 10'
-                        ],
-                        ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
-                        // array of features to
-                        // ignore
-                        ignoreFiles: ['**/normalize.css'], // an optional array of file globs to match against original source file path, to ignore
-                        // onFeatureUsage: function (usageInfo) {
-                        //   console.log(usageInfo.message)
-                        // }
-                    })
+                    // doiuse({
+                    //     browsers   : [
+                    //         'ie >= 10'
+                    //     ],
+                    //     ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
+                    //     ignoreFiles: ['**/normalize.css']
+                    // })
                 ]
             )
         )
@@ -197,20 +194,7 @@ gulp.task('sass', function () {
         .pipe(
             postcss(
                 [
-                    cssnext(),
-                    // autoprefixer(),
-                    doiuse({
-                        browsers   : [
-                            'ie >= 10'
-                        ],
-                        ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
-                        // array of features to
-                        // ignore
-                        ignoreFiles: ['**/normalize.css'], // an optional array of file globs to match against original source file path, to ignore
-                        // onFeatureUsage: function (usageInfo) {
-                        //   console.log(usageInfo.message)
-                        // }
-                    })
+                    cssnext()
                 ]
             )
         )
@@ -227,18 +211,14 @@ gulp.task('sass', function () {
                 [
                     cssnext(),
                     // autoprefixer(),
-                    doiuse({
-                        browsers   : [
-                            'ie >= 10'
-                        ],
-                        ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
-                        // array of features to
-                        // ignore
-                        ignoreFiles: ['**/normalize.css'], // an optional array of file globs to match against original source file path, to ignore
-                        // onFeatureUsage: function (usageInfo) {
-                        //   console.log(usageInfo.message)
-                        // }
-                    })
+                    // doiuse({
+                    //     browsers   : [
+                    //         'ie >= 10'
+                    //     ],
+                    //    warn: false,
+                    //     ignore     : ['rem', 'text-size-adjust', 'outline', 'css-appearance', 'css-resize'], // an optional
+                    //     ignoreFiles: ['**/normalize.css'],
+                    // })
                 ]
             )
         )
@@ -299,22 +279,22 @@ gulp.task('images', function () {
 
 //
 // // Sincronizzazione Browser
-// gulp.task('browser-sync', function () {
+gulp.task('browser-sync', function () {
 //     //watch files
-//     var files = [
+    var files = [
 //         config.PATH_BUILD + 'css/**/*.css',
 //         config.PATH_BUILD + 'js/**/*.js',
 //         'resources/**/*.blade.php'
-//     ];
+    ];
 //
 //     //init browsersync
-//     browserSync.init(files, {
-//         proxy          : config.APP_URL,
-//         notify         : true,
-//         reloadOnRestart: true,
-//         injectChanges: true
-//     });
-// });
+    browserSync.init(files, {
+        proxy          : config.APP_URL,
+        notify         : true,
+        reloadOnRestart: true,
+        injectChanges: true
+    });
+});
 
 
 gulp.task('watch', function () {
@@ -324,14 +304,14 @@ gulp.task('watch', function () {
 
 
 // Default task to be run with `gulp`
-gulp.task('default', ['npm', 'images', 'copy', 'sass', 'js', 'copy'], function () {
+gulp.task('default', ['npm', 'images', 'copy', 'sass', 'js'], function () {
 
     gulp.start('watch');
     // if (config.production) {
     //     gulp.start('images');
     // }
     // else {
-    //    // gulp.start('browser-sync');
+       gulp.start('browser-sync');
     //     gulp.start('watch');
     // }
 });

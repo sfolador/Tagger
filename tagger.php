@@ -194,16 +194,16 @@ class Tagger {
 	 * @param $arr
 	 */
 	static function printArrayOfRelatedTags( $arr ) {
-		echo '<div id="in-this-picture">';
 		if ( $arr ) {
 			foreach ( $arr as $k => $element ) {
+				echo "<article id='{$k}' data-link='{$element->link}' class='related-product $k'>";
 				if ( $element->thumb ) {
-					echo $element->thumb;
+					echo '<div class="img-cnt"><div class="image">' . $element->thumb . '</div></div>';
 				}
-				echo "{$element->post_title}: <a href='{$element->link}' class='$k'>{$element->post_title}</a><br/>";
+				echo "<h2>{$element->post_title}</h2>";
+				echo '</article>';
 			}
 		}
-		echo '</div>';
 	}
 	
 	static function printRelatedTags( $post ) {
